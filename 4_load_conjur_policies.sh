@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-export SERVICE_IP=$(kubectl get svc --namespace conjur \
-                                          conjur-oss-ingress \
-                                          -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export SERVICE_IP=$(oc get svc --namespace conjur \
+     conjur-oss-ingress \
+     -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 
 rm -rf mydata/
@@ -22,7 +22,3 @@ docker run --rm -it --add-host conjur.demo.com:$SERVICE_IP -v $(pwd)/mydata/:/ro
 docker run --rm -it --add-host conjur.demo.com:$SERVICE_IP -v $(pwd)/mydata/:/root cyberark/conjur-cli:5 variable values add orquestador-ajustadores-app/db-username "test_app"
 docker run --rm -it --add-host conjur.demo.com:$SERVICE_IP -v $(pwd)/mydata/:/root cyberark/conjur-cli:5 variable values add orquestador-ajustadores-app/db-password "5b3e5f75cb3cdc725fe40318"
 docker run --rm -it --add-host conjur.demo.com:$SERVICE_IP -v $(pwd)/mydata/:/root cyberark/conjur-cli:5 variable values add orquestador-ajustadores-app/url "postgresql://test-summon-sidecar-app-backend.orquestador.svc.cluster.local:5432/postgres"
-
-
-
-
