@@ -3,7 +3,7 @@ set -euo pipefail
 
 
 export API_KEY_ADMIN=$(cat admin.key)
-export SERVICE_IP=$(kubectl get svc --namespace conjur \
+export SERVICE_IP=$(oc get svc --namespace conjur \
                                           conjur-oss-ingress \
                                           -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
