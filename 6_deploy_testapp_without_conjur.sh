@@ -52,5 +52,5 @@ sleep 10s
 oc describe service test-app | grep 'LoadBalancer Ingress'
 app_url=$(oc describe service test-app | grep 'LoadBalancer Ingress' | awk '{ print $3 }'):8080
 
-echo -e "Adding entry to the app\n"
-curl  -d '{"name": "Insecure App"}' -H "Content-Type: application/json" $app_url/pet
+#echo -e "Adding entry to the app\n"
+#curl  -d '{"name": "Insecure App"}' -H "Content-Type: application/json" $app_url/pet
