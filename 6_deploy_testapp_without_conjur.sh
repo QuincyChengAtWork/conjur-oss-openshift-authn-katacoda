@@ -5,12 +5,12 @@ export TEST_APP_NAMESPACE_NAME=${TEST_APP_NAMESPACE_NAME}-insecure
 
 echo "Creating Test App namespace."
 
-if ! kubectl get namespace $TEST_APP_NAMESPACE_NAME > /dev/null
+if ! oc get namespace $TEST_APP_NAMESPACE_NAME > /dev/null
 then
-    kubectl create namespace $TEST_APP_NAMESPACE_NAME
+    oc create namespace $TEST_APP_NAMESPACE_NAME
 fi
 
-kubectl config set-context $(kubectl config current-context) --namespace=$TEST_APP_NAMESPACE_NAME
+oc config set-context $(kubectl config current-context) --namespace=$TEST_APP_NAMESPACE_NAME
 
 echo "Build test app image"
 
@@ -49,7 +49,7 @@ done
 echo -e "Wait for 10 seconds\n"
 sleep 10s
 
-kubectl describe service test-app | grep 'LoadBalancer Ingress'
+oc describe service test-app | grep 'LoadBalancer Ingress'
 app_url=$(kubectl describe service test-app | grep 'LoadBalancer Ingress' | awk '{ print $3 }'):8080
 
 echo -e "Adding entry to the app\n"
