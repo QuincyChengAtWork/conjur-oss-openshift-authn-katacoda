@@ -72,6 +72,47 @@ kubectl describe service test-app-summon-sidecar | grep 'LoadBalancer Ingress'
 
 app_url=$(kubectl describe service test-app-summon-sidecar | grep 'LoadBalancer Ingress' | awk '{ print $3 }'):8080
 
+#########
+
+
+  $cli create configmap test-app-secretless-config \
+    --from-file=etc/secretless.yml
+
+  sleep 5
+
+  ensure_env_database
+  case "${TEST_APP_DATABASE}" in
+  postgres)
+    PORT=5432
+    PROTOCOL=postgresql
+    ;;
+  mysql)
+    PORT=3306
+    PROTOCOL=mysql
+    ;;
+  esac
+  secretless_db_url="$PROTOCOL://localhost:$PORT/test_app"
+
+  sed "s#{{ CONJUR_VERSION }}#$CONJUR_VERSION#g" ./$PLATFORM/test-app-secretless.yml |
+    sed "s#{{ SECRETLESS_IMAGE }}#$secretless_image#g" |
+    sed "s#{{ SECRETLESS_DB_URL }}#$secretless_db_url#g" |
+    sed "s#{{ CONJUR_AUTHN_URL }}#$conjur_authenticator_url#g" |
+    sed "s#{{ CONJUR_AUTHN_LOGIN_PREFIX }}#$conjur_authn_login_prefix#g" |
+    sed "s#{{ CONFIG_MAP_NAME }}#$TEST_APP_NAMESPACE_NAME#g" |
+    sed "s#{{ CONJUR_ACCOUNT }}#$CONJUR_ACCOUNT#g" |
+    sed "s#{{ CONJUR_APPLIANCE_URL }}#$conjur_appliance_url#g" |
+    kubectl create -f -
+
+  echo "Secretless test app deployed."
+
+
+
+
+####
+
+
+
+
 echo -e "Wait for 20 seconds\n"
 sleep 20s
 
